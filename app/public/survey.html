@@ -11,7 +11,6 @@
     <script src="https://code.jquery.com/jquery.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
-    
 </head>
 
 <body>
@@ -118,7 +117,7 @@
                 </select>
 
                 <h3><strong>Question 9</strong></h3>
-                <h4>You think that everyone’s views should be respected regardless of whether 
+                <h4>You think that everyone’s views should be respected regardless of whether
                     they are supported by facts or not.</h4>
                 <select data-placeholder="" class="chosen-select" id="q9">
                     <option value=""></option>
@@ -141,9 +140,10 @@
                 </select>
                 <br><br>
 
-                <button type="submit" class="btn btn-primary btn-lg btn-block" id="submit"><i class="fa fa-check-circle" aria-hidden="true">
+                <button type="submit" class="btn btn-primary btn-lg btn-block" id="submit"><i class="fa fa-check-circle"
+                        aria-hidden="true">
                     </i>Submit</button>
-                
+
             </div>
         </div>
 
@@ -158,6 +158,29 @@
 
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="resultsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="exampleModalLabel"><strong>Best Match</strong></h2>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h2 id="matchName"></h2>
+                    <img id="matchImg" class="img-fluid" src="" alt="">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>
@@ -170,14 +193,14 @@
         // Form validation
         function validateForm() {
             var isValid = true;
-            $(".form-contorl").each(function() {
+            $(".form-contorl").each(function () {
                 if ($(this).val() === "") {
                     isValid = false;
                 }
             });
 
-            $(".chosen-select").each(function() {
-                if($(this).val() === "") {
+            $(".chosen-select").each(function () {
+                if ($(this).val() === "") {
                     isValid = false;
                 }
             });
@@ -185,14 +208,13 @@
         }
 
         if (validateForm()) {
-            
+
             var userData = {
                 name: $("#name").val(),
                 photo: $("#photo").val(),
                 scores: [
                     $("#q1").val(),
                     $("#q2").val(),
-                    $("#q3").val(),
                     $("#q3").val(),
                     $("#q4").val(),
                     $("#q5").val(),
@@ -205,11 +227,22 @@
                 ]
             };
 
+            // Grad the URL of the website
             var currentURL = window.location.origin;
 
-            $.post(currentURL + "/api/friends", userData, function(data) {
-                alert("working");
+            // AJAX post the data to the friends API
+            $.post(currentURL + "/api/friends", userData, function (data) {
+                
+                // Grab the result from the AJAX post so that the best match's name and photo are displayed
+                $("#matchName").text(data.name);
+                $("#matchImg").attr("src", data.photo);
+
+                // Show the modal with best match
+                $("#resultsModal").modal("toggle");
+
             });
+        } else {
+            alert("Please fill out all fields before submitting!");
         }
 
     });
